@@ -23,22 +23,12 @@ Status ShapeFn(InferenceContext* c)
 	TF_RETURN_IF_ERROR(c->WithRank(c->input(1), 4, &b_shape));
 
 	//get dims for both inputs
-	DimensionHandle a_0_dim = c->Dim(a_shape,0);
-	DimensionHandle a_1_dim = c->Dim(a_shape,1);
-	DimensionHandle a_2_dim = c->Dim(a_shape,2);
-	DimensionHandle a_3_dim = c->Dim(a_shape,3);
-	
-	DimensionHandle b_0_dim = c->Dim(b_shape,0);
-	DimensionHandle b_1_dim = c->Dim(b_shape,1);
-	DimensionHandle b_2_dim = c->Dim(b_shape,2);
-	DimensionHandle b_3_dim = c->Dim(b_shape,3);
-
-	//check that the dims match
-	if (c->Value(a_0_dim) != c->Value(b_0_dim) ||
-		c->Value(a_1_dim) != c->Value(b_1_dim) ||
-		c->Value(a_2_dim) != c->Value(b_2_dim) ||
-		c->Value(a_3_dim) != c->Value(b_3_dim)) {
-		return errors::InvalidArgument(
+	for(int i = 0; i < 4; i++)
+	{
+		DimensionHandle a_dim = c->Dim(a_shape,i);
+		DimensionHandle b_dim = c->Dim(b_shape,i);
+		if (c->Value(a_dim) != c->Value(b_dim))
+			return errors::InvalidArgument(
 			"a and b dimensions must match input dimensions");
 	}
 
