@@ -18,15 +18,6 @@ Status ShapeFn(InferenceContext* c)
 	return Status::OK();
 }
 
-/**
- * register the operation with necessary options
- */
-REGISTER_OP("CustomAdd")
-		.Input("a: T")
-		.Input("b: T")
-		.Output("c: T")
-		.Attr("T: {int32, float32, float64}")
-		.SetShapeFn(ShapeFn);
 
 //declare kernel launcher
 template <typename dtype>
@@ -51,6 +42,6 @@ public:
 		auto a_flat = a_tensor.flat<dtype>();
 		auto b_flat = b_tensor.flat<dtype>();
 
-		
+
 	}
 };

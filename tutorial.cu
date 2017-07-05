@@ -16,4 +16,3 @@ void launchAddKernel(const dtype* a, const dtype* b, dtype* c, int N) {
 		printf("kernel launch failed with error \"%s\".\n",
 			cudaGetErrorString(cudaerr));
 }
-
