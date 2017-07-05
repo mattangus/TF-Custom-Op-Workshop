@@ -10,7 +10,8 @@ except Exception as e:
 
 custom_add = _tutorial.custom_add
 
-shape = (1,10,10)
+shape = (1,10,10,3)
+#shape = (1,10,10)
 
 a_data = np.random.random(shape)
 b_data = np.random.random(shape)
@@ -19,3 +20,5 @@ a = tf.constant(a_data, shape=shape, name="a")
 b = tf.constant(b_data, shape=shape, name="b")
 
 c_cust = custom_add(a,b)
+
+print(c_cust.get_shape())
