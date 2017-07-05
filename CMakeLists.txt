@@ -23,6 +23,6 @@ cuda_add_library(
 
 #copy python files to build folder (for easy testing)
 file(GLOB PY_FILES
-  "src/*.py"
+  "*.py"
 )
 file(COPY ${PY_FILES} DESTINATION .)

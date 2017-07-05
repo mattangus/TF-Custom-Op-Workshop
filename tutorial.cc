@@ -81,32 +81,11 @@ public:
 		auto a_flat = a_tensor.flat<dtype>();
 		auto b_flat = b_tensor.flat<dtype>();
 
-		//allocate the output
-		Tensor* output_tensor = nullptr;
-		OP_REQUIRES_OK(context,
-			context->allocate_output(0,
-			a_tensor.shape(),&output_tensor));
-
-		//get flat version to fill
-		auto output = output_tensor->flat<dtype>();
-
-		const int N = output.size();
-
-		// Call the cuda kernel launcher
-		launchAddKernel<dtype>(a_flat.data(), b_flat.data(), output.data(), N);
 	}
 };
 
-//register kernel with types needed
-#define REGISTER_KERNEL(type) \
-	REGISTER_KERNEL_BUILDER( \
-		Name("CustomAdd") \
-		.Device(DEVICE_GPU) \
-		.TypeConstraint<type>("T"), \
-		CustomAddOp<type>) \
-
-REGISTER_KERNEL(int);
-REGISTER_KERNEL(float);
-REGISTER_KERNEL(double);
-
-#undef REGISTER_KERNEL
+REGISTER_KERNEL_BUILDER(
+	Name("CustomAdd")
+	.Device(DEVICE_GPU)
+	.TypeConstraint<double>("T"),
+	CustomAddOp<double>) 
