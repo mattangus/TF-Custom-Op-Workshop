@@ -87,16 +87,8 @@ public:
 	}
 };
 
-//register kernel with types needed
-#define REGISTER_KERNEL(type) \
-	REGISTER_KERNEL_BUILDER( \
-		Name("CustomAdd") \
-		.Device(DEVICE_GPU) \
-		.TypeConstraint<type>("T"), \
-		CustomAddOp<type>) \
-
-REGISTER_KERNEL(int);
-REGISTER_KERNEL(float);
-REGISTER_KERNEL(double);
-
-#undef REGISTER_KERNEL
+REGISTER_KERNEL_BUILDER(
+	Name("CustomAdd")
+	.Device(DEVICE_GPU)
+	.TypeConstraint<double>("T"),
+	CustomAddOp<double>);

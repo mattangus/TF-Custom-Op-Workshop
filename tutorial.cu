@@ -24,14 +24,6 @@ void launchAddKernel(const dtype* a, const dtype* b, dtype* c, int N) {
 			cudaGetErrorString(cudaerr));
 }
 
-
 //forward declaration for all the types needed
-#define ADD_KERNEL_TYPE(type)							\
-	template void launchAddKernel<type>(				\
-		const type* a, const type* b, type* c, int N)	\
-
-ADD_KERNEL_TYPE(int);
-ADD_KERNEL_TYPE(float);
-ADD_KERNEL_TYPE(double);
-
-#undef ADD_KERNEL_TYPE
+template void launchAddKernel<double>(
+	const double* a, const double* b, double* c, int N);
