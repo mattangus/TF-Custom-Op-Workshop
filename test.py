@@ -3,7 +3,10 @@ from tensorflow.python.framework import ops
 
 import numpy as np
 
-_tutorial = tf.load_op_library('./build/libtutorial.so')
+try:
+	_tutorial = tf.load_op_library('./build/libtutorial.so')
+except Exception as e:
+	_tutorial = tf.load_op_library('./libtutorial.so')
 custom_add = _tutorial.custom_add
 
 shape = (1,10,10,3)
