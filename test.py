@@ -8,11 +8,16 @@ custom_add = _tutorial.custom_add
 
 shape = (1,10,10,3)
 
-a = tf.constant(np.random.random(shape), shape=shape, name="a")
-b = tf.constant(np.random.random(shape), shape=shape, name="b")
+a_data = np.random.random(shape)
+b_data = np.random.random(shape)
 
+a = tf.constant(a_data, shape=shape, name="a")
+b = tf.constant(b_data, shape=shape, name="b")
 
-c = custom_add(a,b)
+c_cust = custom_add(a,b)
+c = a + b
 
 with tf.Session() as sess:
-	print(sess.run(c))
+	expected = sess.run(c)
+	result = sess.run(c_cust)
+	print(np.array_equal(expected,result))

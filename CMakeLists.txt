@@ -20,3 +20,9 @@ cuda_add_library(
 	tutorial SHARED
 	tutorial.cu
 	tutorial.cc)
+
+#copy python files to build folder (for easy testing)
+file(GLOB PY_FILES
+  "src/*.py"
+)
+file(COPY ${PY_FILES} DESTINATION .)
