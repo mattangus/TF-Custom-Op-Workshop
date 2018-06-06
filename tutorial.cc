@@ -8,9 +8,14 @@
 #include <iostream>
 #include <cuda.h>
 
+#include "tutorial.h"
+
 using namespace tensorflow;
 using namespace std;
 using namespace shape_inference;
+
+using CPUDevice = Eigen::ThreadPoolDevice;
+using GPUDevice = Eigen::GpuDevice;
 
 Status ShapeFn(InferenceContext* c)
 {
@@ -48,11 +53,17 @@ REGISTER_OP("CustomAdd")
 		.Attr("T: {int32, float32, float64}")
 		.SetShapeFn(ShapeFn);
 
-//declare kernel launcher
-template <typename dtype>
-void launchAddKernel(const dtype* a, const dtype* b, dtype* c, int N);
 
 template <typename dtype>
+struct launchAddKernel<CPUDevice, dtype> {
+	void operator()(const CPUDevice& d, const dtype* a, const dtype* b, dtype* c, int N) {
+		for(int i = 0; i < N; i++)
+			c[i] = a[i] + b[i];
+	}
+};
+
+
+template <typename Device, typename dtype>
 class CustomAddOp : public OpKernel {
 public:
 	
@@ -83,20 +94,37 @@ public:
 		const int N = output.size();
 
 		// Call the cuda kernel launcher
-		launchAddKernel<dtype>(a_flat.data(), b_flat.data(), output.data(), N);
+		launchAddKernel<Device, dtype>()(
+			context->eigen_device<Device>(),
+			a_flat.data(),
+			b_flat.data(),
+			output.data(), N);
 	}
 };
 
 //register kernel with types needed
-#define REGISTER_KERNEL(type) \
+#define REGISTER_GPU(type) \
 	REGISTER_KERNEL_BUILDER( \
 		Name("CustomAdd") \
 		.Device(DEVICE_GPU) \
 		.TypeConstraint<type>("T"), \
-		CustomAddOp<type>) \
+		CustomAddOp<GPUDevice, type>) \
 
-REGISTER_KERNEL(int);
-REGISTER_KERNEL(float);
-REGISTER_KERNEL(double);
+REGISTER_GPU(int);
+REGISTER_GPU(float);
+REGISTER_GPU(double);
 
-#undef REGISTER_KERNEL
+#undef REGISTER_GPU
+
+#define REGISTER_CPU(type) \
+	REGISTER_KERNEL_BUILDER( \
+		Name("CustomAdd") \
+		.Device(DEVICE_CPU) \
+		.TypeConstraint<type>("T"), \
+		CustomAddOp<CPUDevice, type>) \
+
+REGISTER_CPU(int);
+REGISTER_CPU(float);
+REGISTER_CPU(double);
+
+#undef REGISTER_CPU
